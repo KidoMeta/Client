@@ -39,7 +39,8 @@ canvas {
   right: 0;
   margin: auto;
   max-width: 750px;
-  height: 250px;
+  height: calc(50% - 350px);
+  max-height: 250px;
   background-color: rgba(255, 255, 255, 0.7);
   border-radius: 8px;
   padding: 10px;
@@ -74,11 +75,12 @@ canvas {
   #chat {
     position: absolute;
     top: 0;
-    bottom: 100px;
+    bottom: 50px;
     right: auto;
     left: calc(50% + 420px);
     height: 40vh;
-    max-width: 350px;
+    max-width: 330px;
+    max-height: 500px;
   }
 
   #messages {

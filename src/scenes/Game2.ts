@@ -1,8 +1,8 @@
 import { Scene } from "phaser";
-import { TYPE_GAME } from "@constants/scenes";
+import { TYPE_GAME_2 } from "@constants/scenes";
 import { isKeyPressed } from "utilities/game-key";
 
-class Game extends Scene {
+class Game2 extends Scene {
   notesTimestamps: any;
   timeToFall: any;
   lastNoteIndex: any;
@@ -23,21 +23,32 @@ class Game extends Scene {
   lastDummyNoteIndex: any;
 
   constructor() {
-    super({ key: TYPE_GAME });
+    super({ key: TYPE_GAME_2 });
   }
   preload() {
     this.load.audio(
       "song",
-      "https://d1myusrzlknp8y.cloudfront.net/src/assets/game/galactic_dancing.ogg"
+      "https://d1myusrzlknp8y.cloudfront.net/src/assets/game/aespa_Supernova.mp3"
     );
     this.physics.world.debugGraphic.visible = false;
+    // this.load.json('noteData', 'timestamps_supernova.json');
   }
 
   create() {
     /*---------------*/
-    // Notes timestamps, made with the other script "record.html". They are relative to the start of the song, meaning a value of 1000 equals to 1 second after the song has started
-    this.notesTimestamps = JSON.parse(
-      '[{"timestamp":944},{"timestamp":1383},{"timestamp":1768},{"timestamp":2173},{"timestamp":2364},{"timestamp":2562},{"timestamp":2951},{"timestamp":3560},{"timestamp":3767},{"timestamp":3969},{"timestamp":4164},{"timestamp":4565},{"timestamp":4760},{"timestamp":4971},{"timestamp":5377},{"timestamp":5567},{"timestamp":5766},{"timestamp":6163},{"timestamp":6776},{"timestamp":6978},{"timestamp":7181},{"timestamp":7388},{"timestamp":7781},{"timestamp":8174},{"timestamp":8576},{"timestamp":8770},{"timestamp":8965},{"timestamp":9358},{"timestamp":9970},{"timestamp":10177},{"timestamp":10376},{"timestamp":10570},{"timestamp":10964},{"timestamp":11162},{"timestamp":11365},{"timestamp":11762},{"timestamp":11961},{"timestamp":12184},{"timestamp":12561},{"timestamp":13165},{"timestamp":13380},{"timestamp":13575},{"timestamp":13778},{"timestamp":14167},{"timestamp":14370},{"timestamp":14585},{"timestamp":14978},{"timestamp":15177},{"timestamp":15400},{"timestamp":15764},{"timestamp":16356},{"timestamp":16563},{"timestamp":16766},{"timestamp":16973},{"timestamp":17391},{"timestamp":17594},{"timestamp":17792},{"timestamp":17987},{"timestamp":18181},{"timestamp":18367},{"timestamp":18570},{"timestamp":18765},{"timestamp":19145},{"timestamp":19535},{"timestamp":19750},{"timestamp":19961},{"timestamp":20172},{"timestamp":20573},{"timestamp":20772},{"timestamp":20975},{"timestamp":21372},{"timestamp":21579},{"timestamp":21790},{"timestamp":22167},{"timestamp":22771},{"timestamp":22982},{"timestamp":23185},{"timestamp":23578},{"timestamp":23785},{"timestamp":23988},{"timestamp":24182},{"timestamp":24393},{"timestamp":24592},{"timestamp":24790},{"timestamp":24981},{"timestamp":25378},{"timestamp":25771},{"timestamp":26190}]'
+    // 타임스탬프 JSON 파일을 읽어들입니다.
+    // fetch('notes_timestamps.json')
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         this.notesTimestamps = JSON.parse(data);
+    //     })
+    //     .catch(error => {
+    //         console.error(error);
+    // });
+
+   
+    this.notesTimestamps =  JSON.parse(
+        '[{"timestamp": 666}, {"timestamp": 2665}, {"timestamp": 3249}, {"timestamp": 3416}, {"timestamp": 4249}, {"timestamp": 4583}, {"timestamp": 4749}, {"timestamp": 5499}, {"timestamp": 5749}, {"timestamp": 5916}, {"timestamp": 5999}, {"timestamp": 7083}, {"timestamp": 7333}, {"timestamp": 8333}, {"timestamp": 8416}, {"timestamp": 8499}, {"timestamp": 9249}, {"timestamp": 10249}, {"timestamp": 11249}, {"timestamp": 12166}, {"timestamp": 13166}, {"timestamp": 13749}, {"timestamp": 13999}, {"timestamp": 14166}, {"timestamp": 14916}, {"timestamp": 15166}, {"timestamp": 15416}, {"timestamp": 15666}, {"timestamp": 16166}, {"timestamp": 16249}, {"timestamp": 17166}, {"timestamp": 18249}, {"timestamp": 19166}, {"timestamp": 19582}, {"timestamp": 20208}, {"timestamp": 21166}, {"timestamp": 21666}, {"timestamp": 21833}, {"timestamp": 22124}, {"timestamp": 22665}, {"timestamp": 23041}, {"timestamp": 23291}, {"timestamp": 23499}, {"timestamp": 23749}, {"timestamp": 24208}, {"timestamp": 25166}, {"timestamp": 25708}, {"timestamp": 25916}, {"timestamp": 26208}, {"timestamp": 26582}, {"timestamp": 27166}, {"timestamp": 27624}, {"timestamp": 27874}, {"timestamp": 28166}, {"timestamp": 28582}, {"timestamp": 29166}, {"timestamp": 30166}, {"timestamp": 31083}, {"timestamp": 32124}, {"timestamp": 33083}, {"timestamp": 33624}, {"timestamp": 33958}, {"timestamp": 34333}, {"timestamp": 34833}, {"timestamp": 35166}, {"timestamp": 36208}, {"timestamp": 37208}, {"timestamp": 38166}, {"timestamp": 38999}, {"timestamp": 39249}, {"timestamp": 39499}, {"timestamp": 39749}, {"timestamp": 39958}, {"timestamp": 39999}, {"timestamp": 40208}, {"timestamp": 40333}, {"timestamp": 41124}, {"timestamp": 42124}, {"timestamp": 42583}, {"timestamp": 42791}, {"timestamp": 43541}, {"timestamp": 43708}, {"timestamp": 44166}, {"timestamp": 44666}, {"timestamp": 44874}, {"timestamp": 46208}, {"timestamp": 46791}, {"timestamp": 46916}, {"timestamp": 47666}, {"timestamp": 47791}, {"timestamp": 48499}, {"timestamp": 48749}, {"timestamp": 49333}, {"timestamp": 50166}, {"timestamp": 51166}, {"timestamp": 51999}, {"timestamp": 52541}, {"timestamp": 52749}, {"timestamp": 53124}, {"timestamp": 54083}, {"timestamp": 54583}, {"timestamp": 54791}, {"timestamp": 55499}, {"timestamp": 55708}, {"timestamp": 56708}, {"timestamp": 57124}, {"timestamp": 57624}, {"timestamp": 58083}, {"timestamp": 58333}, {"timestamp": 58708}, {"timestamp": 59666}, {"timestamp": 59708}, {"timestamp": 60333}, {"timestamp": 60583}, {"timestamp": 61083}, {"timestamp": 61458}, {"timestamp": 61833}, {"timestamp": 62166}, {"timestamp": 62541}, {"timestamp": 62916}]'
     );
     this.timeToFall = 1000; // ms, time for the note to go to the bottom. The lower the faster/hardest
     this.lastNoteIndex = 0; // last note spawned
@@ -102,23 +113,39 @@ class Game extends Scene {
     this.checkDummyNoteCollisions(); // 더미 노트 충돌 검사
   }
 
-  spawnNotes() {
-    // lets look up to the 10 next notes and spawn if needed
-    for (let i = this.lastNoteIndex; i < this.lastNoteIndex + 10; i++) {
-      let note = this.notesTimestamps[i];
-      if (!note) break;
+//   spawnNotes() {
+//     // lets look up to the 10 next notes and spawn if needed
+//     for (let i = this.lastNoteIndex; i < this.lastNoteIndex + 10; i++) {
+//       let note = this.notesTimestamps[i];
+//       if (!note) break;
 
-      // Spawn note if: is not already spawned, and the timing is right. From the start of the song, we need to consider the time it takes for the note to fall so we start it at the timestamp minus the time to fall
-      if (
-        note.spawned != true &&
-        note.timestamp <= Date.now() - this.startTime + this.timeToFall
-      ) {
-        this.spawnNote();
-        this.lastNoteIndex = i;
-        note.spawned = true;
-      }
+//       // Spawn note if: is not already spawned, and the timing is right. From the start of the song, we need to consider the time it takes for the note to fall so we start it at the timestamp minus the time to fall
+//       if (
+//         note.spawned != true &&
+//         note.timestamp <= Date.now() - this.startTime + this.timeToFall
+//       ) {
+//         this.spawnNote();
+//         this.lastNoteIndex = i;
+//         note.spawned = true;
+//       }
+//     }
+//   }
+spawnNotes() {
+    for (let i = this.lastNoteIndex; i < this.lastNoteIndex + 10; i++) {
+        let note = this.notesTimestamps[i];
+        if (!note) break;
+
+        if (
+            note.spawned != true &&
+            note.timestamp <= Date.now() - this.startTime + 1000 // 180 BPM, 1초 간격
+        ) {
+            this.spawnNote();
+            this.lastNoteIndex = i;
+            note.spawned = true;
+        }
     }
-  }
+}
+
 
   spawnNote() {
     // This is self explanatory. Spawn the note and let it fall to the bottom.
@@ -239,4 +266,4 @@ class Game extends Scene {
   }
 }
 
-export default Game;
+export default Game2;
